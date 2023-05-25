@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import "./Footer.scss";
 import { client } from "../../client";
@@ -13,9 +13,22 @@ const Footer = () => {
   });
   const [isFormSubmitted, setIsFormSubmitted] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [contactData, setContactData] = useState([]);
   const [error, setError] = useState(false);
 
   const { name, message, email } = formData;
+
+  useEffect((effect) => {
+    client
+      .fetch(`*[_type == "misc"]`)
+      .then((data) => {
+        setContactData(data[0]["contact"]);
+      })
+      .catch((err) => {
+        setError(err);
+      });
+  }, []);
+  // console.log(contactData);
 
   const inputChangeHandler = (event) => {
     const { name, value } = event.target;
@@ -63,14 +76,14 @@ const Footer = () => {
       <div className="app__footer-cards">
         <div className="app__footer-card">
           <img src={images.email} alt="email" />
-          <a href="mailto:aashishpal50@gmail.com" className="p-text">
-            aashishpal50@gmail.com
+          <a href={`mailto:${contactData["email"]}`} className="p-text">
+            {contactData["email"]}
           </a>
         </div>
         <div className="app__footer-card">
           <img src={images.mobile} alt="mobile number" />
-          <a href="tel:+91 8796858882" className="p-text">
-            +91 8796858882
+          <a href={`tel:${contactData["phone"]}`} className="p-text">
+            {contactData["phone"]}
           </a>
         </div>
       </div>

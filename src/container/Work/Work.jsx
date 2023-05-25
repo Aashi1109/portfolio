@@ -12,6 +12,7 @@ const Work = () => {
   const [animateCard, setAnimateCard] = useState([{ y: 0, opacity: 1 }]);
   const [works, setWorks] = useState([]);
   const [filteredWorks, setFilteredWorks] = useState([]);
+  const [projectCategory, setProjectCategory] = useState([]);
 
   const workFilterHandler = (item) => {
     console.log(item);
@@ -39,6 +40,13 @@ const Work = () => {
     });
   }, []);
 
+  useEffect(() => {
+    const query = '*[_type == "misc"]';
+    client.fetch(query).then((data) => {
+      setProjectCategory(data[0]["category"]);
+    });
+  }, []);
+  // console.log(projectCategory);
   return (
     <>
       <h2 className="head-text">
@@ -46,19 +54,17 @@ const Work = () => {
         Section
       </h2>
       <div className="app__work-filter">
-        {["Frontend", "Python", "ReactJS", "Full Stack", "All"].map(
-          (item, index) => (
-            <div
-              key={index}
-              onClick={() => workFilterHandler(item.toLowerCase())}
-              className={`app__work-filter-item app__flex p-text ${
-                activeFilter === item ? "item-active" : ""
-              }`}
-            >
-              {item}
-            </div>
-          )
-        )}
+        {projectCategory.map((item, index) => (
+          <div
+            key={index}
+            onClick={() => workFilterHandler(item.toLowerCase())}
+            className={`app__work-filter-item app__flex p-text ${
+              activeFilter === item ? "item-active" : ""
+            }`}
+          >
+            {item}
+          </div>
+        ))}
       </div>
       <motion.div
         animate={animateCard}
